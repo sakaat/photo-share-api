@@ -1,0 +1,25 @@
+{
+    "name": "photo-share-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "tslint": "npx tslint --project .",
+        "start": "nodemon -e js,ts,json,graphql"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "apollo-server": "^2.9.9",
+        "graphql": "^14.5.8"
+    },
+    "devDependencies": {
+        "@types/node": "^12.12.8",
+        "nodemon": "^1.19.4",
+        "ts-node": "^8.5.2",
+        "tslint": "^5.20.1",
+        "tslint-microsoft-contrib": "^6.2.0",
+        "typescript": "^3.7.2"
+    }
+}
