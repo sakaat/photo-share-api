@@ -11,7 +11,6 @@ import { resolvers } from "./resolvers";
 
 const start = async () => {
     const app = express();
-
     const MONGO_DB = process.env.DB_HOST;
 
     const client = await MongoClient.connect(MONGO_DB, {
@@ -20,12 +19,16 @@ const start = async () => {
 
     const db = client.db();
 
-    const context = { db };
-
     const server = new ApolloServer({
         typeDefs,
         resolvers,
-        context,
+        context: async ({ req }) => {
+            const githubToken = req.headers.authorization;
+            const currentUser = await db
+                .collection("users")
+                .findOne({ githubToken });
+            return { db, currentUser };
+        },
     });
 
     server.applyMiddleware({ app });

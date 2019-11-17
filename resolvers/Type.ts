@@ -13,10 +13,10 @@ module.exports = {
                 .map((photoID) => photos.find((p) => p.id === photoID)),
     },
     Photo: {
-        url: (parent) => `https://yoursite.com/img/${parent.id}.jpg`,
-        postedBy: (parent) => {
-            return users.find((u) => u.githubLogin === parent.githubUser);
-        },
+        id: (parent) => parent.id || parent._id,
+        url: (parent) => `/img/photos/${parent._id}.jpg`,
+        postedBy: (parent, _args, { db }) =>
+            db.collection("users").findOne({ githubLogin: parent.userID }),
         taggedUsers: (parent) =>
             tags
                 .filter((tag) => tag.photoID === parent.id)

@@ -1,6 +1,8 @@
 import {} from "./index";
 
 module.exports = {
+    me: (_parent, _args, { currentUser }) => currentUser,
+
     totalUsers: (_parent, _args, { db }) =>
         db.collection("users").estimatedDocumentCount(),
 

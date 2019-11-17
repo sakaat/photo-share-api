@@ -1,15 +1,21 @@
+import fetch from "node-fetch";
 import { authorizeWithGithub } from "../lib";
-import { photos } from "./index";
 
 module.exports = {
-    postPhoto(_parent, args) {
-        let id = photos.length + 1;
+    async postPhoto(_parent, args, { db, currentUser }) {
+        if (!currentUser) {
+            throw new Error("only an authorized user can post a photo");
+        }
+
         const newPhoto = {
-            id: id++,
             ...args.input,
+            userID: currentUser.githubLogin,
             created: new Date(),
         };
-        photos.push(newPhoto);
+
+        const { insertedIds } = await db.collection("photos").insert(newPhoto);
+        newPhoto.id = insertedIds[0];
+
         return newPhoto;
     },
 
@@ -46,5 +52,34 @@ module.exports = {
             });
 
         return { user, token: access_token };
+    },
+
+    async addFakeUsers(_root, { count }, { db }) {
+        const randomUserApi = `https://randomuser.me/api/?results=${count}`;
+
+        const { results } = await fetch(randomUserApi).then((res) =>
+            res.json(),
+        );
+
+        const users = results.map((r) => ({
+            githubLogin: r.login.username,
+            name: `${r.name.first} ${r.name.last}`,
+            avatar: r.picture.thumbnail,
+            githubToken: r.login.sha1,
+        }));
+
+        await db.collection("users").insert(users);
+
+        return users;
+    },
+
+    async fakeUserAuth(_parent, { githubLogin }, { db }) {
+        const user = await db.collection("users").findOne({ githubLogin });
+
+        if (!user) {
+            throw new Error(`Cannot find user with githubLogin ${githubLogin}`);
+        }
+
+        return { token: user.githubToken, user };
     },
 };
