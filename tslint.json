@@ -6,7 +6,9 @@
     ],
     "jsRules": {},
     "rules": {
+        "export-name": false,
         "no-console": false,
+        "no-relative-imports": false,
         "object-literal-sort-keys": false,
         "variable-name": false
     },
