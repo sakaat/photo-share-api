@@ -28,6 +28,8 @@ type Photo {
 }
 
 type Query {
+    totalUsers: Int!
+    allUsers: [User!]!
     totalPhotos: Int!
     allPhotos(after: DateTime): [Photo!]!
 }

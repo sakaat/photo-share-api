@@ -9,6 +9,7 @@
         "export-name": false,
         "no-console": false,
         "no-relative-imports": false,
+        "no-var-requires": false,
         "object-literal-sort-keys": false,
         "variable-name": false
     },
