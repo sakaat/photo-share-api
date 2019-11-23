@@ -1,7 +1,9 @@
 import { ApolloServer, PubSub } from "apollo-server-express";
 import express = require("express");
 import { readFileSync } from "fs";
+import depthLimit = require("graphql-depth-limit");
 import expressPlayground from "graphql-playground-middleware-express";
+import { createComplexityLimitRule } from "graphql-validation-complexity";
 import { createServer } from "http";
 
 import { MongoClient } from "mongodb";
@@ -32,6 +34,12 @@ const start = async () => {
     const server = new ApolloServer({
         typeDefs,
         resolvers,
+        validationRules: [
+            depthLimit(5),
+            createComplexityLimitRule(1000, {
+                onCost: (cost) => console.log("query cost:", cost),
+            }),
+        ],
         context: async ({ req, connection }) => {
             const githubToken = req
                 ? req.headers.authorization
@@ -50,6 +58,7 @@ const start = async () => {
 
     const httpServer = createServer(app);
     server.installSubscriptionHandlers(httpServer);
+    httpServer.timeout = 5000;
 
     httpServer.listen({ port: 4000 }, () => {
         console.log(
