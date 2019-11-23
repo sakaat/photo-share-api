@@ -7,11 +7,18 @@ import { createServer } from "http";
 import { MongoClient } from "mongodb";
 require("dotenv").config();
 
+import path = require("path");
+
 const typeDefs = readFileSync("./typeDefs.graphql", "UTF-8");
 import { resolvers } from "./resolvers";
 
 const start = async () => {
     const app = express();
+    app.use(
+        "/img/photos",
+        express.static(path.join(__dirname, "assets", "photos")),
+    );
+
     const MONGO_DB = process.env.DB_HOST;
 
     const client = await MongoClient.connect(MONGO_DB, {
