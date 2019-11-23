@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import { authorizeWithGithub } from "../lib";
 
 module.exports = {
-    async postPhoto(_parent, args, { db, currentUser }) {
+    async postPhoto(_parent, args, { db, currentUser, pubsub }) {
         if (!currentUser) {
             throw new Error("only an authorized user can post a photo");
         }
@@ -15,6 +15,8 @@ module.exports = {
 
         const { insertedIds } = await db.collection("photos").insert(newPhoto);
         newPhoto.id = insertedIds[0];
+
+        pubsub.publish("photo-added", { newPhoto });
 
         return newPhoto;
     },

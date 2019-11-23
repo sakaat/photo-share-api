@@ -1,5 +1,6 @@
 import Mutation = require("./Mutation");
 import Query = require("./Query");
+import Subscription = require("./Subscription");
 import Type = require("./Type");
 
 export const users = [
@@ -44,5 +45,6 @@ export const tags = [
 export const resolvers = {
     Query,
     Mutation,
+    Subscription,
     ...Type,
 };
